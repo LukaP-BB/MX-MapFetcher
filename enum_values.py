@@ -144,3 +144,19 @@ track_example = {
    "SizeWarning":False,
    "InPLList":False
 }
+
+track_example_light = {
+   "TrackID":194208,
+   "MapType":"Race",
+   "TitlePack":"TMStadium",
+   "StyleName":"Race",
+   "EnvironmentName":"Stadium",
+   "VehicleName":"StadiumCar",
+   "LengthName":"1 min",
+   "DifficultyName":"Beginner",
+   "TrackValue":0,
+   "Unlisted":False,
+   "AwardCount":0,
+   "Unreleased":False,
+   "Downloadable":True,
+}
