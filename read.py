@@ -5,56 +5,21 @@ import re, json, time
 import sys
 import argparse, tkinter as tk
 from enum_values import *
+import functions as funk
+import rng_map as rng
 
-def page(link, num):
-    link+=f"&page={num}"
-    return link
+import tkinter.font
 
-def create_db():
-    start_time = time.time()
-    """creates the database of all current maps on MX,
-    if the file already exists, update the base"""
-    database = []
-    limit = False
-    i = 1
-    while not limit :
-        parse_start = time.time()
-        with open("database.json", "r") as db_file :
-            try :
-                database = json.load(db_file)
-            except Exception as e :
-                print(f"exception at {i} : \n{e}")
-                pass
-        api_link = "https://tm.mania-exchange.com/tracksearch2/search?api=on"+limit100
-        api_link = page(api_link, i)
-        result = req.get(api_link)
-        js = json.loads(result.text)
-        if len(js["results"]) == 0 :
-            end_time = time.time()
-            print(f"limit has been reached after {round(end_time - start_time, 1)} seconds and {i} page loaded")
-            limit = True
-        for result in js["results"] :
-            database.append({
-                   "TrackID": result["TrackID"],
-                   "MapType": result["MapType"],
-                   "TitlePack": result["TitlePack"],
-                   "StyleName": result["StyleName"],
-                   "EnvironmentName": result["EnvironmentName"],
-                   "VehicleName": result["VehicleName"],
-                   "LengthName": result["LengthName"],
-                   "DifficultyName": result["DifficultyName"],
-                   "TrackValue": result["TrackValue"],
-                   "Unlisted": result["Unlisted"],
-                   "AwardCount": result["AwardCount"],
-                   "Unreleased": result["Unreleased"],
-                   "Downloadable": result["Downloadable"],
-                })
-        if not limit :
-            with open("database.json", "w") as db_file :
-                json.dump(database, db_file, indent=1)
-        parse_end = time.time()
-        print(f"Page {i} parsed in {parse_end-parse_start} seconds")
-        i += 1
+def rng_find():
+    Length.get()
+    parameters = define_parameters(
+        car=Vehicles.get(),
+        envi=Environment.get(),
+        awards=5,
+        len1=,
+        len2="1 min"
+        )
+    look4map(parameters=parameters)
 
 def search():
     final_link = (
@@ -87,62 +52,81 @@ def search():
     # tk.Tk().clipboard_append(string)
     # api_link = "https://tm.mania-exchange.com/tracksearch2/search?api=on"
 
-def create_popup(window, enum, name, label_name):
-    #the action when something is selected
+def create_dropdown(window, enum, name, label_name):
+    #the action when something is selected in the dropdown
     def fonction_test(*args):
-        # link+=enum[name.get()]
-        print(enum[name.get()])
-        # return enum[name.get()]
+        print(enum[name.get()]) # changes the StringVar and keeps it somewhere to be retreived
     #grouping the dropdown and a label
-    frame = tk.Frame(window, bg="white", bd=1, relief="sunken")
-    frame.config(width=290)
-    frame.pack()
+    frame = tk.Frame(window, bg="#F4A261", bd=1, relief="ridge", width=290)
+    # frame.config()
+    frame.pack(side="bottom")
     # label of the dropdown
-    label_title = tk.Label(frame, text=label_name, font=("Calibri", 15), bg="white", fg="black")
+    label_title = tk.Label(frame, text=label_name, font=("Impact", 12), bg="#F4A261", fg="black")
     label_title.pack(side="left")
     #creating the dropdown
     name.set(next(iter(enum))) #sets the default action to the first element of the dict
     popup = tk.OptionMenu(frame, name, *enum)
+    popup.config(bg="#F4A261", font=("Impact", 10))
     name.trace('w', fonction_test)
     popup.pack(side="right")
 
 
 
 if __name__ == '__main__' :
-    create_db()
-    # # creating an instance for the main window
-    # root = tk.Tk()
-    # root.title("Map ID picker") #setting title
-    # # base_window.iconbitmap("path/to/file.ico")
-    # root.minsize(300,150)
-    # root.config(background="white")
-    #
-    # # the link for the api call
-    # link = tk.StringVar()
-    # link.set("https://tm.mania-exchange.com/tracksearch2/search?api=on")
-    #
-    # # creating control variables and adding the popups
-    # Length = tk.StringVar(root)
-    # create_popup(root, length, Length, "Length")
-    # Operator = tk.StringVar(root)
-    # create_popup(root, lengthop, Operator, "Operator")
-    # Vehicles = tk.StringVar(root)
-    # create_popup(root, vehicles, Vehicles, "Vehicles")
-    # Style = tk.StringVar(root)
-    # create_popup(root, style, Style, "Style")
-    # Environment = tk.StringVar(root)
-    # create_popup(root, environments, Environment, "Environment")
-    # Ordering = tk.StringVar(root)
-    # create_popup(root, ordering, Ordering, "Ordering")
-    #
-    # # add submit button
-    # button = tk.Button(root, text="Get me those map id's !", font=("Calibri", 15), bg="grey", fg="black", command=lambda: search())
-    # button.pack(pady="10")
-    # #setting the final string that will be printed
-    # final_str = tk.StringVar(root)
-    # final_label = tk.Text(root, bg="white", bd=1, relief="sunken")
-    # final_label.insert(tk.END, "Here your string")
-    # final_label.pack()
-    #
-    # root.mainloop()
+    start_time = time.time()
+    db = funk.load_database()
+    print(time.time()-start_time)
+    print(len(db))
+    # print(db[1])
+
+    # creating an instance for the main window
+    root = tk.Tk()
+    root.title("Map ID picker") #setting title
+    root.iconbitmap("mx_full.ico")
+    root.minsize(300,150)
+    root.config(background="#2A9D8F")
+
+    # the link for the api call
+    link = tk.StringVar()
+    link.set("https://tm.mania-exchange.com/tracksearch2/search?api=on")
+
+    left_panel = tk.Frame(root, bg="#F4A261", bd=1, relief="ridge", width=290)
+    left_panel.pack(pady=10, padx=10, side="left")
+
+    scale2 = tk.Scale(left_panel, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=10, to=100,
+          resolution=1, tickinterval=10, length=350,
+          label='Amount of maps desired')
+    scale2.pack()
+
+    scale = tk.Scale(left_panel, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=0, to=60,
+          resolution=1, tickinterval=5, length=350,
+          label='Minimu Award Count (for randomly picked maps)')
+    scale.pack()
+
+    popups = tk.Frame(left_panel, bg="#F4A261", width=290)
+    popups.pack(pady=10, padx=10)
+    # creating control variables and adding the popups
+    Length = tk.StringVar(root)
+    create_dropdown(popups, length, Length, "Length")
+    Operator = tk.StringVar(root)
+    create_dropdown(popups, lengthop, Operator, "Operator")
+    Vehicles = tk.StringVar(root)
+    create_dropdown(popups, vehicles, Vehicles, "Vehicles")
+    Style = tk.StringVar(root)
+    create_dropdown(popups, style, Style, "Style")
+    Environment = tk.StringVar(root)
+    create_dropdown(popups, environments, Environment, "Environment")
+    Ordering = tk.StringVar(root)
+    create_dropdown(popups, ordering, Ordering, "Ordering")
+
+    # add submit button
+    button = tk.Button(root, text="Get me those map id's !", font=("Impact", 12), bg="#E76F51", fg="black", command=lambda: search())
+    button.pack(pady="10")
+    #setting the final string that will be printed
+    final_str = tk.StringVar(root)
+    final_label = tk.Text(root, bg="#E9C46A", bd=1, relief="sunken")
+    final_label.insert(tk.END, "Here your string")
+    final_label.pack(pady=10, padx=10)
+
+    root.mainloop()
 
