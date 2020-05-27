@@ -10,16 +10,39 @@ import rng_map as rng
 
 import tkinter.font
 
-def rng_find():
-    Length.get()
-    parameters = define_parameters(
+def rng_find(db):
+    op = int(lengthop[Operator.get()][10])
+
+    if op == 0 :
+        len1 = Length.get()
+        len2 = Length.get()
+    elif op == 1 :
+        len2 = Length.get()
+        len1 = "15 secs"
+    elif op == 2 :
+        len1 = Length.get()
+        len2 = "Long"
+    elif op == 3 :
+        len2 = Length.get()
+        len1 = "15 secs"
+    elif op == 4 :
+        len1 = Length.get()
+        len2 = "Long"
+
+    # parameters = rng.define_parameters(car="sta", envi="sta", awards=5, len1=30, len2="1 min")
+    parameters = rng.define_parameters(
         car=Vehicles.get(),
         envi=Environment.get(),
-        awards=5,
-        len1=,
-        len2="1 min"
+        len1=len1,
+        len2=len2,
+        style=Style.get(),
+        awards=AwardsCount.get(),
         )
-    look4map(parameters=parameters)
+    print(parameters)
+    string = rng.look4map(db,map_amount=MapCount.get(), parameters=parameters)
+
+    final_label.delete("1.0", tk.END)
+    final_label.insert(tk.INSERT, string)
 
 def search():
     final_link = (
@@ -30,6 +53,7 @@ def search():
         +style[Style.get()]
         +environments[Environment.get()]
         +ordering[Ordering.get()]
+        +f"&limit={MapCount.get()}"
         )
     print(final_link)
     result = req.get(final_link)
@@ -83,7 +107,8 @@ if __name__ == '__main__' :
     root = tk.Tk()
     root.title("Map ID picker") #setting title
     root.iconbitmap("mx_full.ico")
-    root.minsize(300,150)
+    root.minsize(1050,500)
+    root.maxsize(1050,500)
     root.config(background="#2A9D8F")
 
     # the link for the api call
@@ -93,15 +118,17 @@ if __name__ == '__main__' :
     left_panel = tk.Frame(root, bg="#F4A261", bd=1, relief="ridge", width=290)
     left_panel.pack(pady=10, padx=10, side="left")
 
-    scale2 = tk.Scale(left_panel, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=10, to=100,
+    MapCount = tk.IntVar(root)
+    scale = tk.Scale(left_panel, variable=MapCount, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=10, to=100,
           resolution=1, tickinterval=10, length=350,
           label='Amount of maps desired')
-    scale2.pack()
-
-    scale = tk.Scale(left_panel, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=0, to=60,
-          resolution=1, tickinterval=5, length=350,
-          label='Minimu Award Count (for randomly picked maps)')
     scale.pack()
+
+    AwardsCount = tk.IntVar(root)
+    scale2 = tk.Scale(left_panel, variable=AwardsCount, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=0, to=25,
+          resolution=1, tickinterval=5, length=350,
+          label='Minimum Award Count (for randomly picked maps)')
+    scale2.pack()
 
     popups = tk.Frame(left_panel, bg="#F4A261", width=290)
     popups.pack(pady=10, padx=10)
@@ -119,9 +146,14 @@ if __name__ == '__main__' :
     Ordering = tk.StringVar(root)
     create_dropdown(popups, ordering, Ordering, "Ordering")
 
+    buttons = tk.Frame(root, bg="#2A9D8F", width=290)
+    buttons.pack(pady=10, padx=10)
     # add submit button
-    button = tk.Button(root, text="Get me those map id's !", font=("Impact", 12), bg="#E76F51", fg="black", command=lambda: search())
-    button.pack(pady="10")
+    button = tk.Button(buttons, text="Use the API", font=("Impact", 12), bg="#E76F51", fg="black", command=lambda: search())
+    button.pack(padx="10", side="left")
+    button2 = tk.Button(buttons, text="BlessRNG", font=("Impact", 12), bg="#E76F51", fg="black", command=lambda: rng_find(db))
+    button2.pack(padx="10", side="right")
+
     #setting the final string that will be printed
     final_str = tk.StringVar(root)
     final_label = tk.Text(root, bg="#E9C46A", bd=1, relief="sunken")

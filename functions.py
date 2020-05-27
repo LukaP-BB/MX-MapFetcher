@@ -8,6 +8,48 @@ from enum_values import *
 import functions as funk
 
 
+def update_db():
+    start_time = time.time()
+    """creates the database of all current maps on MX,
+    if the file already exists, update the base"""
+    database = load_database()
+    found = False
+    i = 1
+    while not found :
+        parse_start = time.time()
+        api_link = "https://tm.mania-exchange.com/tracksearch2/search?api=on"+limit100
+        api_link = page(api_link, i)
+        result = req.get(api_link)
+        js = json.loads(result.text)
+        for result in js["results"] :
+            if result not in database :
+                database.append({
+                       "TrackID": result["TrackID"],
+                       "MapType": result["MapType"],
+                       "TitlePack": result["TitlePack"],
+                       "StyleName": result["StyleName"],
+                       "EnvironmentName": result["EnvironmentName"],
+                       "VehicleName": result["VehicleName"],
+                       "LengthName": result["LengthName"],
+                       "DifficultyName": result["DifficultyName"],
+                       "TrackValue": result["TrackValue"],
+                       "Unlisted": result["Unlisted"],
+                       "AwardCount": result["AwardCount"],
+                       "Unreleased": result["Unreleased"],
+                       "Downloadable": result["Downloadable"],
+                    })
+            else :
+                found = True
+        with open("database.csv", "w+") as csv_file :
+            writer = csv.DictWriter(csv_file, fieldnames=[key for key in database[0]])
+            writer.writeheader()
+            for row in database :
+                writer.writerow(row)
+        parse_end = time.time()
+        print(f"Page {i} parsed in {parse_end-parse_start} seconds")
+        i += 1
+
+
 def page(link, num):
     link+=f"&page={num}"
     return link
