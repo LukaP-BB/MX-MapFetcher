@@ -15,7 +15,7 @@ Two methods are available to retreive maps :
     * Getting the most recent maps
     * Getting maps that are rare (lots of awards, long maps, envimix...)
     * Getting interesting maps thanks to the ordering option such as *activity, awards, comments, difficulty, MX_karma* and so on...
-* Second method is based on Random Number Generation. It randomly picks maps from the database as long as they fit your criterias. The database is auto-updated each time you start the program.
+* Second method is based on Random Number Generation. It randomly picks maps from the database as long as they fit your criterias. This method is great to gather random shit and find the occasional gem that might have been unnoticed. The database is auto-updated each time you start the program.
 ## Installation
 Either clone this repository or directlty download the files in a folder of your choice.
 
