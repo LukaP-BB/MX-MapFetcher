@@ -6,7 +6,7 @@ Example :
 ![Example](https://github.com/LukaP-BB/MX-MapFetcher/blob/master/Capture.PNG)
 ## How does it work ?
 Two methods are available to retreive maps :
-* First method use an API call ([MX api])(https://api.mania-exchange.com/) and acts as a research. You give parameters such as style, length etc.. and you'll get the first page of results. It's great for several needs :
+* First method use an API call [MX api](https://api.mania-exchange.com/) and acts as a research. You give parameters such as style, length etc.. and you'll get the first page of results. It's great for several needs :
     * Getting the most recent maps
     * Getting maps that are rare (lots of awards, long maps, envimix...)
     * Getting interesting maps thanks to the ordering option such as activity, awards, comments, difficulty, MX_karma and so on...
