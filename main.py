@@ -50,7 +50,7 @@ def search():
         +ordering[Ordering.get()]
         +f"&limit={MapCount.get()}"
         )
-    print(final_link)
+    # print(final_link)
     result = req.get(final_link)
     js = json.loads(result.text)
     found = False
@@ -74,7 +74,7 @@ def search():
 def create_dropdown(window, enum, name, label_name):
     #the action when something is selected in the dropdown
     def fonction_test(*args):
-        print(enum[name.get()]) # changes the StringVar and keeps it somewhere to be retreived
+        enum[name.get()] # changes the StringVar and keeps it somewhere to be retreived
     #grouping the dropdown and a label
     frame = tk.Frame(window, bg="#ffe1a8", bd=1, relief="ridge", width=290)
     # frame.config()

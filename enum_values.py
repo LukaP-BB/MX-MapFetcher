@@ -8,11 +8,10 @@ The api call ignore the award count, as you can choose to order the search resul
 Calling the API is better for higly specific research parameters (high award \ncount, envimix, long maps of a specific style...) while using the random method \ngives you a nice un-predictable result and may give you access to hidden gems (as well as a pile of shit)"
 
 ordering = {
-	"Default" : "&priord=-1",
-	"Trackname_alphabetical" : "&priord=0",
-	"Authorname_alphabetical" : "&priord=1",
 	"Uploaded_newest" : "&priord=2",
 	"Uploaded_oldest" : "&priord=3",
+	"Trackname_alphabetical" : "&priord=0",
+	"Authorname_alphabetical" : "&priord=1",
 	"Updated_newest" : "&priord=4",
 	"Updated_oldest" : "&priord=5",
 	"Activity_most_recent" : "&priord=6",
