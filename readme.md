@@ -17,6 +17,7 @@ Either clone this repository or directlty download the files in a folder of your
 As it is, you'll need Python 3 installed on your computer, as well as two modules that may or may not come with the default Python installation :
 * Tkinter
 * Requests
+
 You can install them with pip :
 ```
 pip install tkinter
