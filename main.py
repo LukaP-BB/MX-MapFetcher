@@ -76,16 +76,16 @@ def create_dropdown(window, enum, name, label_name):
     def fonction_test(*args):
         print(enum[name.get()]) # changes the StringVar and keeps it somewhere to be retreived
     #grouping the dropdown and a label
-    frame = tk.Frame(window, bg="#F4A261", bd=1, relief="ridge", width=290)
+    frame = tk.Frame(window, bg="#ffe1a8", bd=1, relief="ridge", width=290)
     # frame.config()
     frame.pack(side="bottom")
     # label of the dropdown
-    label_title = tk.Label(frame, text=label_name, font=("Impact", 12), bg="#F4A261", fg="black")
+    label_title = tk.Label(frame, text=label_name, font=("Impact", 12), bg="#ffe1a8", fg="black")
     label_title.pack(side="left")
     #creating the dropdown
     name.set(next(iter(enum))) #sets the default action to the first element of the dict
     popup = tk.OptionMenu(frame, name, *enum)
-    popup.config(bg="#F4A261", font=("Impact", 10))
+    popup.config(bg="#ffe1a8", font=("Impact", 10))
     name.trace('w', fonction_test)
     popup.pack(side="right")
 
@@ -103,28 +103,28 @@ if __name__ == '__main__' :
     root.iconbitmap("mx_full.ico")
     root.minsize(1052,500)
     root.maxsize(1052,500)
-    root.config(background="#2A9D8F")
+    root.config(background="#f3e9d2")
 
     # the link for the api call
     link = tk.StringVar()
     link.set("https://tm.mania-exchange.com/tracksearch2/search?api=on")
 
-    left_panel = tk.Frame(root, bg="#F4A261", bd=1, relief="ridge", width=290)
+    left_panel = tk.Frame(root, bg="#c6dabf", bd=1, relief="ridge", width=290)
     left_panel.pack(pady=10, padx=10, side="left")
 
     MapCount = tk.IntVar(root)
-    scale = tk.Scale(left_panel, variable=MapCount, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=10, to=100,
+    scale = tk.Scale(left_panel, variable=MapCount, font=("Impact", 11), bg="#c6dabf", orient='horizontal', from_=10, to=100,
           resolution=1, tickinterval=10, length=350,
           label='Amount of maps desired')
     scale.pack()
 
     AwardsCount = tk.IntVar(root)
-    scale2 = tk.Scale(left_panel, variable=AwardsCount, font=("Impact", 11), bg="#F4A261", orient='horizontal', from_=0, to=25,
+    scale2 = tk.Scale(left_panel, variable=AwardsCount, font=("Impact", 11), bg="#c6dabf", orient='horizontal', from_=0, to=25,
           resolution=1, tickinterval=5, length=350,
           label='Minimum Award Count (for randomly picked maps)')
     scale2.pack()
 
-    popups = tk.Frame(left_panel, bg="#F4A261", width=290)
+    popups = tk.Frame(left_panel, bg="#c6dabf", width=290)
     popups.pack(pady=10, padx=10)
     # creating control variables and adding the popups
     Length = tk.StringVar(root)
@@ -140,17 +140,17 @@ if __name__ == '__main__' :
     Ordering = tk.StringVar(root)
     create_dropdown(popups, ordering, Ordering, "Ordering")
 
-    buttons = tk.Frame(root, bg="#2A9D8F", width=290)
+    buttons = tk.Frame(root, bg="#f3e9d2", width=290)
     buttons.pack(pady=10, padx=10)
     # add submit button
-    button = tk.Button(buttons, text="Use the API", font=("Impact", 12), bg="#E76F51", fg="black", command=lambda: search())
+    button = tk.Button(buttons, text="Use the API", font=("Impact", 12), bg="#ffe1a8", fg="black", command=lambda: search())
     button.pack(padx="10", side="left")
-    button2 = tk.Button(buttons, text="BlessRNG", font=("Impact", 12), bg="#E76F51", fg="black", command=lambda: rng_find(db))
+    button2 = tk.Button(buttons, text="BlessRNG", font=("Impact", 12), bg="#ffe1a8", fg="black", command=lambda: rng_find(db))
     button2.pack(padx="10", side="right")
 
     #setting the final string that will be printed
     final_str = tk.StringVar(root)
-    final_label = tk.Text(root, bg="#E9C46A", bd=1, relief="sunken")
+    final_label = tk.Text(root, bg="#c6dabf", bd=1, relief="sunken")
     final_label.insert(tk.END, help_text)
     final_label.config(width=293)
     final_label.pack(pady=10, padx=10)
