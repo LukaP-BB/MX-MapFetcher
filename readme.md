@@ -1,6 +1,6 @@
 # MX-MapFetcher - V 1.0
 ## What's the point of this program ?
-The original idea behind this was to be able to randomly pick maps and be able to give a command to my server controller (which is PyPlanet).\n
+The original idea behind this was to be able to randomly pick maps and be able to give a command to my server controller (which is PyPlanet).
 This way, by setting a few parameters and pushing a button, I would be able to get 10 to 100 maps at once and download them instantly on my server.
 Example :
 ![Example](./capture.png)
