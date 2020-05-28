@@ -1,4 +1,4 @@
-#M X-MapFetcher
+# MX-MapFetcher
 ## V 1.0
 ##### What's the point of this program ?
 The original idea behind this was to be able to randomly pick maps and be able to give a command to my server controller (which is PyPlanet).
