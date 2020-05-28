@@ -3,7 +3,7 @@
 The original idea behind this was to be able to randomly pick maps and be able to give a command to my server controller (which is PyPlanet).
 This way, by setting a few parameters and pushing a button, I would be able to get 10 to 100 maps at once and download them instantly on my server.
 Example :
-![Example](./capture.png)
+![Example](https://github.com/LukaP-BB/MX-MapFetcher/blob/master/Capture.PNG)
 ## How does it work ?
 Two methods are available to retreive maps :
 * First method use an API call ([MX api])(https://api.mania-exchange.com/) and acts as a research. You give parameters such as style, length etc.. and you'll get the first page of results. It's great for several needs :
