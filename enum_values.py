@@ -1,5 +1,12 @@
 limit100 = "&limit=100"
 
+help_text = "This program can use 2 methods to fetch a list of map IDs that you can then paste in your server controller.\n\n\
+	- First one is an api call that is equal to a research on mania-exchange. You can select your parameters, the ordering, and the program will give you the x amount of maps desired.\n\n\
+	- Second one is based on random number generation. It randomly picks maps from the database as long as they fit your criterias.\n\n\
+\
+The api call ignore the award count, as you can choose to order the search result by a whole set of options including awards. If you use the random method, the \nordering is ignored.\n\n\
+Calling the API is better for higly specific research parameters (high award \ncount, envimix, long maps of a specific style...) while using the random method \ngives you a nice un-predictable result and may give you access to hidden gems (as well as a pile of shit)"
+
 ordering = {
 	"Default" : "&priord=-1",
 	"Trackname_alphabetical" : "&priord=0",

@@ -9,10 +9,12 @@ import functions as funk
 
 
 def update_db():
-    start_time = time.time()
     """creates the database of all current maps on MX,
     if the file already exists, update the base"""
+    start_time = time.time()
     database = load_database()
+    print(f"Most recent track : {database[0]['TrackID']}")
+    db_size = len(database)
     found = False
     i = 1
     while not found :
@@ -22,32 +24,36 @@ def update_db():
         result = req.get(api_link)
         js = json.loads(result.text)
         for result in js["results"] :
-            if result not in database :
+            if int(database[0]["TrackID"]) != int(result["TrackID"]) :
                 database.append({
-                       "TrackID": result["TrackID"],
-                       "MapType": result["MapType"],
-                       "TitlePack": result["TitlePack"],
-                       "StyleName": result["StyleName"],
-                       "EnvironmentName": result["EnvironmentName"],
-                       "VehicleName": result["VehicleName"],
-                       "LengthName": result["LengthName"],
-                       "DifficultyName": result["DifficultyName"],
-                       "TrackValue": result["TrackValue"],
-                       "Unlisted": result["Unlisted"],
-                       "AwardCount": result["AwardCount"],
-                       "Unreleased": result["Unreleased"],
-                       "Downloadable": result["Downloadable"],
-                    })
+                           "TrackID": result["TrackID"],
+                           "MapType": result["MapType"],
+                           "TitlePack": result["TitlePack"],
+                           "StyleName": result["StyleName"],
+                           "EnvironmentName": result["EnvironmentName"],
+                           "VehicleName": result["VehicleName"],
+                           "LengthName": result["LengthName"],
+                           "DifficultyName": result["DifficultyName"],
+                           "TrackValue": result["TrackValue"],
+                           "Unlisted": result["Unlisted"],
+                           "AwardCount": result["AwardCount"],
+                           "Unreleased": result["Unreleased"],
+                           "Downloadable": result["Downloadable"],
+                           })
             else :
                 found = True
-        with open("database.csv", "w+") as csv_file :
-            writer = csv.DictWriter(csv_file, fieldnames=[key for key in database[0]])
-            writer.writeheader()
-            for row in database :
-                writer.writerow(row)
+                break
         parse_end = time.time()
-        print(f"Page {i} parsed in {parse_end-parse_start} seconds")
+        print(f"Page {i} parsed in {round(parse_end-parse_start, 1)} seconds")
         i += 1
+
+    database = sorted(database, key=lambda result:(int(result["TrackID"])), reverse=True)
+    with open("database.csv", "w+") as csv_file :
+        writer = csv.DictWriter(csv_file, fieldnames=[key for key in database[0]])
+        writer.writeheader()
+        for row in database :
+            writer.writerow(row)
+    print(f"{len(database)-db_size} maps have been added to the database")
 
 
 def page(link, num):
@@ -105,7 +111,7 @@ def create_db():
             with open("database.json", "w") as db_file :
                 json.dump(database, db_file, indent=1)
         parse_end = time.time()
-        print(f"Page {i} parsed in {parse_end-parse_start} seconds")
+        print(f"Page {i} parsed in {round(parse_end-parse_start, 1)} seconds")
         i += 1
 
 
@@ -118,3 +124,9 @@ def transform_db():
         for row in database :
             writer.writerow(row)
     return database
+
+if __name__ == "__main__" :
+    # print("restoring database...")
+    # transform_db()
+    print("updating...")
+    update_db()

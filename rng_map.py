@@ -63,7 +63,8 @@ def check_parameters(map_dict, parameters):
 
 
 
-def look4map(db, map_amount=20, parameters="default", timeout=20):
+def look4map(db, map_amount=20, parameters="default"):
+    timeout=10
     string = ""
     loop_start = time.time()
     if parameters == "default" :
