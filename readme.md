@@ -7,6 +7,8 @@ This way, by setting a few parameters and pushing a button, I would be able to g
 Example :
 
 ![Example](https://github.com/LukaP-BB/MX-MapFetcher/blob/master/Capture.PNG)
+
+This was also an excuse to learn tkinter and do my first program with a GUI. It's still ugly but I'll see how I can improve.
 ## How does it work ?
 Two methods are available to retreive maps :
 * First method use an API call ([MX api](https://api.mania-exchange.com/)) and acts as a research. You give parameters such as style, length etc.. and you'll get the first page of results. It's great for several needs :
