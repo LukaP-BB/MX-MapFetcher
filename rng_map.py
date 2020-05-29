@@ -61,35 +61,40 @@ def check_parameters(map_dict, parameters):
     else :
         return False
 
-
+def alt_search(db, parameters, map_amount):
+    loop_start = time.time()
+    list_maps = []
+    final_list = []
+    for i in range(len(db)) :
+        exec_time = round(time.time() - loop_start, 1)
+        if check_parameters(db[i], parameters) and db[i]["TrackID"] not in list_maps :
+            list_maps.append(db[i]["TrackID"])
+    i = 0
+    if len(list_maps) >= map_amount :
+        while i < map_amount :
+            rng = random.randint(0, len(list_maps)-1)
+            if list_maps[rng] not in final_list :
+                # print(f"{rng}, {len(list_maps)}")
+                final_list.append(list_maps[rng])
+                i+=1
+        return final_list, len(list_maps)
+    else :
+        return list_maps, len(list_maps)
 
 def look4map(db, map_amount=20, parameters="default"):
-    timeout=10
+    timeout=3
+    TO = False
     string = ""
     loop_start = time.time()
     if parameters == "default" :
         print("DEFAULT PARAMETERS")
         parameters = {'VehicleName': 'StadiumCar', 'EnvironmentName': 'Stadium',
                     'length1': '15 secs', 'length2': 'Long', 'awards': 0}
-
     list_maps = []
     loop = True
     list_numbers = []
     while loop :
         exec_time = time.time() - loop_start
-        if exec_time > timeout :
-            loop = False
-            if len(list_maps) == 0 :
-                string =  "No map found du to timeout, for hard search parameters, the API will be more performant\n"
-                string+="Your search parameters : \n"
-                for parameter in parameters :
-                    string+=f"\t{parameter} : {parameters[parameter]}\n"
-                return string
-            elif len(list_maps) < map_amount :
-                string = f"{len(list_maps)}/{map_amount} maps found in {round(exec_time, 2)} secs (finish timeout)\n\
-For hard search parameters, the API will be more performant\n"
-            else :
-                string = f"Time to find the maps : {round(exec_time, 2)} secs\n"
         number = random.randint(0, len(db)-1)
         if number not in list_numbers :
             list_numbers.append(number)
@@ -97,9 +102,15 @@ For hard search parameters, the API will be more performant\n"
                 list_maps.append(db[number]["TrackID"])
         if len(list_maps) == map_amount :
             loop = False
-            string+=f"Time to find the maps : {round(exec_time, 2)}\n"
+        if exec_time > timeout :
+            TO = True
+            loop = False
+            list_maps, total_maps = alt_search(db, parameters, map_amount)
+            string+=f"Only {total_maps} map(s) exist in the database with the desired parameters\n"
+    if not TO :
+        string+=f"{len(list_numbers)} unique maps parsed out of {len(db)}\n"
 
-    string+=f"{len(list_numbers)} unique maps parsed out of {len(db)}\n"
+    string+=f"Time to find the maps : {round(exec_time, 2)}\n"
     string+="Your search parameters : \n"
     for parameter in parameters :
         string+=f"\t{parameter} : {parameters[parameter]}\n"
@@ -109,11 +120,36 @@ For hard search parameters, the API will be more performant\n"
     return string
 
 
+def test(db, parameters):
+    loop_start = time.time()
+    loop = True
+    list_maps = []
+    list_numbers = []
+    stats = {}
+    while loop :
+        exec_time = round(time.time() - loop_start, 1)
+        if exec_time >= 30 :
+            loop = False
+        number = random.randint(0, len(db)-1)
+        stats[exec_time] = len(list_maps)
+        if number not in list_numbers :
+            list_numbers.append(number)
+            if check_parameters(db[number], parameters) and db[number]["TrackID"] not in list_maps :
+                list_maps.append(db[number]["TrackID"])
+    with open("stats.csv", "w+") as stat_file :
+        final_str = ""
+        for stat in stats :
+            final_str+=f"{stat},{stats[stat]}\n"
+        stat_file.write(final_str)
+
+
 if __name__ == "__main__" :
     start_time = time.time()
     db = funk.load_database()
+    print(len(db))
     print(f"Loading database in {time.time()-start_time} seconds\n")
     map_parameters = {"car" : "stadium", "envi" : "stadium", "awards" : 0, "length" : "15 secs"}
-    parameters = define_parameters(car="sta", envi="sta", awards=5, len1=30, len2="1 min")
+    parameters = define_parameters(car="sta", envi="stadium", awards=5, len1=15, len2="long")
     print(f"Parameters : {parameters}\n")
+    # test2(db, parameters)
     look4map(parameters=parameters)
