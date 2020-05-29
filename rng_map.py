@@ -117,7 +117,7 @@ def look4map(db, map_amount=20, parameters="default"):
     string+="\n//mx add "
     for map in list_maps :
         string += f"{map} "
-    return string
+    return (string, list_maps)
 
 
 def test(db, parameters):
