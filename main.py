@@ -17,21 +17,32 @@ button_font = "Bahnschrift Condensed"
 font_params = (button_font, 15)
 slider_font = (button_font, 13)
 dropdown_font = (button_font, 13)
+menu_bg_color = "#bad2db"
 
-def set_maps_dir(folder_path, button_next):
+def set_maps_dir(folder_path, but=None):
     filename = tkfd.askdirectory()
     folder_path.set(filename)
-    with open("userdata/setup.json", "w+") as setup_file :
-        setup_file.write(folder_path.get())
-    button_next.pack()
+    try :
+        with open("userdata/settings.json", "r+") as setup_file :
+            options = json.load(setup_file)
+    except FileNotFoundError :
+        options = {"dl_folder" : "", "auto_dl" : "False", "auto_add" : "False"}
+
+    if len(filename) > 0 :
+        with open("userdata/settings.json", "w+") as setup_file :
+            options["dl_folder"] = folder_path.get()
+            json.dump(options, setup_file)
+        if but != None :
+            but.pack()
 
 def quit_setup(frame):
     frame.destroy()
 
 def startup_checks():
     try :
-        with open("userdata/setup.json", "r") as userdata :
-            print(f"Map folder : {userdata.read()}")
+        with open("userdata/settings.json", "r") as userdata :
+            options = json.load(userdata)
+            print(options)
     except :
         setup = tk.Tk()
         folder_path = tk.StringVar(setup)
@@ -138,9 +149,10 @@ def create_dropdown(window, enum, name, label_name):
     def fonction_test(*args):
         enum[name.get()] # changes the StringVar and keeps it somewhere to be retreived
     #grouping the dropdown and a label
-    frame = tk.Frame(window, bg=button_color, bd=1, relief="ridge", width=290)
-    # frame.config()
-    frame.pack(side="bottom")
+    frame = tk.Frame(window, bg=button_color, bd=1, relief="ridge", width=290, height=40)
+    # frame.config( )
+    frame.pack(side="bottom", anchor="w", expand=False, fill=None,)
+    frame.pack_propagate(False)
     # label of the dropdown
     label_title = tk.Label(frame, text=label_name, font=font_params, bg=button_color, fg="black")
     label_title.pack(side="left")
@@ -148,8 +160,88 @@ def create_dropdown(window, enum, name, label_name):
     name.set(next(iter(enum))) #sets the default action to the first element of the dict
     popup = tk.OptionMenu(frame, name, *enum)
     popup.config(bg=button_color, font=dropdown_font)
+    popup["menu"].config(bg=menu_bg_color)
     name.trace('w', fonction_test)
     popup.pack(side="right")
+
+def auto_download(Option, window):
+    with open("userdata/settings.json", "r+") as setup_file :
+        options = json.load(setup_file)
+    if Option == True :
+        options["auto_dl"] = True
+    else :
+        options["auto_dl"] = False
+
+    with open("userdata/settings.json", "w") as setup_file :
+        json.dump(options, setup_file)
+
+    window.destroy()
+
+def advanced_settings():
+    TopWdw = tk.Toplevel(bg=general_bg_color)
+    TopWdw.minsize(500,300)
+    TopWdw.maxsize(500,300)
+
+    Info = tk.Label(TopWdw, text="Advanced settings", font=font_params, bg=menu_bg_color, fg="black", width=500)
+    Info.pack()
+
+    with open("userdata/settings.json", "r") as setup_file :
+        options = json.load(setup_file)
+
+    auto_dl = tk.StringVar(TopWdw)
+    auto_dl.set(f'{options["auto_dl"]}')
+    auto_add = tk.StringVar(TopWdw)
+    auto_add.set(f'{options["auto_add"]}')
+    print(f'{options["auto_dl"]}, {options["auto_add"]}')
+
+    dl_frame = tk.Frame(TopWdw, bg=panel_color,  bd=1, relief="ridge", width=450, height=100)
+    dl_frame.pack(side="top", pady=5)
+    dl_frame.pack_propagate(False)
+
+    label1 = tk.Label(dl_frame, text="Automatically download maps at each search ? ", font=font_params, bg=panel_color, fg="black")
+    label1.pack(pady=5, side="top")
+    radio_auto_dl = tk.Radiobutton(dl_frame, variable=auto_dl, text="Yes", value="True", relief="solid")
+    radio_auto_dl.pack()
+    radio_auto_dl = tk.Radiobutton(dl_frame, variable=auto_dl, text="No", value="False", relief="solid")
+    radio_auto_dl.pack()
+
+    add_frame = tk.Frame(TopWdw, bg=panel_color,  bd=1, relief="ridge", width=450, height=100)
+    add_frame.pack(side="top", pady=5)
+    add_frame.pack_propagate(False)
+
+    label2 = tk.Label(add_frame, text="Automatically add maps to the list of played maps ?", font=font_params, bg=panel_color, fg="black")
+    label2.pack(pady=5, side="top")
+    radio_auto_add = tk.Radiobutton(add_frame, variable=auto_add, text="Yes", value="True", relief="solid")
+    radio_auto_add.pack()
+    radio_auto_add = tk.Radiobutton(add_frame, variable=auto_add, text="No", value="False", relief="solid")
+    radio_auto_add.pack()
+
+    save_btn = tk.Button(TopWdw, text="Save settings", font=font_params, bg=button_color, fg="black", command=lambda:dl_maps())
+    save_btn.pack(pady=5, side="top")
+
+
+def make_top_menu() :
+    Top_Menu = tk.Frame(root, bg=menu_bg_color,  bd=1, relief="ridge", width=1052, height=30)
+    Top_Menu.pack(side="top", anchor="w")
+    Top_Menu.pack_propagate(False)
+
+    settings_list = ("Map Folder", "Auto Save MapList", "Advanced Options")
+
+    Setting = tk.StringVar()
+    Setting.set("Settings")
+
+    Button_Settings = tk.Menubutton(Top_Menu, text="Settings")
+    Button_Settings.config(bg=button_color, font=dropdown_font)
+    Button_Settings.pack(side="left")
+
+    Button_Settings.menu = tk.Menu(Button_Settings, cursor="hand2", tearoff=0)
+    Button_Settings["menu"] = Button_Settings.menu
+    Button_Settings.menu.config(bg=menu_bg_color, font=dropdown_font)
+
+    folder_path = tk.StringVar(root)
+    Button_Settings.menu.add_command(label="Download Folder", command=lambda:set_maps_dir(folder_path))
+    Button_Settings.menu.add_command(label="Advanced settings", command=lambda:advanced_settings())
+
 
 if __name__ == '__main__' :
     funk.update_db()
@@ -162,24 +254,26 @@ if __name__ == '__main__' :
     root = tk.Tk()
     root.title("Map ID picker") #setting title
     root.iconbitmap("media/mx_full.ico")
-    root.minsize(1052,500)
-    root.maxsize(1052,500)
+    root.minsize(1052,550)
+    root.maxsize(1052,550)
     root.config(background=general_bg_color)
+
+    make_top_menu()
 
     left_panel = tk.Frame(root, bg=panel_color, bd=1, relief="ridge", width=290)
     left_panel.pack(pady=10, padx=10, side="left")
 
     MapCount = tk.IntVar(root)
     scale = tk.Scale(left_panel, variable=MapCount, font=slider_font, bg=panel_color, orient='horizontal', from_=10, to=100,
-          resolution=1, tickinterval=10, length=350,
+          resolution=1, tickinterval=10, length=300,
           label='Amount of maps desired')
-    scale.pack()
+    scale.pack(pady=5, padx=20)
 
     AwardsCount = tk.IntVar(root)
     scale2 = tk.Scale(left_panel, variable=AwardsCount, font=slider_font, bg=panel_color, orient='horizontal', from_=0, to=25,
-          resolution=1, tickinterval=5, length=350,
+          resolution=1, tickinterval=5, length=300,
           label='Minimum Award Count (for randomly picked maps)')
-    scale2.pack()
+    scale2.pack(pady=5, padx=20)
 
     popups = tk.Frame(left_panel, bg=panel_color, width=290)
     popups.pack(pady=10, padx=10)
@@ -199,8 +293,9 @@ if __name__ == '__main__' :
 
     Map_List = tk.StringVar(root)
     Map_Folder = tk.StringVar(root)
-    with open("userdata/setup.json") as setup_file :
-        Map_Folder.set(setup_file.read())
+    with open("userdata/settings.json") as setup_file :
+        options = json.load(setup_file)
+        Map_Folder.set(options["dl_folder"])
 
     buttons = tk.Frame(root, bg=general_bg_color, width=290)
     buttons.pack(pady=10, padx=10)
