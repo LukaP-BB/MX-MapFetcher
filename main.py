@@ -216,7 +216,7 @@ def advanced_settings():
     radio_auto_add = tk.Radiobutton(add_frame, variable=auto_add, text="No", value="False", relief="solid")
     radio_auto_add.pack()
 
-    save_btn = tk.Button(TopWdw, text="Save settings", font=font_params, bg=button_color, fg="black", command=lambda:dl_maps())
+    save_btn = tk.Button(TopWdw, text="Save settings", font=font_params, bg=button_color, fg="black", command=lambda: print(options))
     save_btn.pack(pady=5, side="top")
 
 
